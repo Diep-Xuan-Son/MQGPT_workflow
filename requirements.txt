@@ -1,0 +1,61 @@
+sentence-transformers
+qdrant-client
+numpy 
+pandas 
+tqdm
+
+fastapi
+uvicorn
+
+# qdrant-client[fastembed-gpu]
+datasets
+inflection
+
+#----for datalake---
+minio
+
+#----unstructured-----
+#python-magic
+# apt-get install libmagic1
+#filetype
+#chardet
+#typing_extensions
+#requests
+#emoji
+#psutil
+#tabulate
+#iso639
+#langdetect
+#pi_heif
+unstructured[all-docs]
+#---pdf---
+#pdf2image
+#pdfminer.six
+#wrapt
+#pypdf
+#lxml
+#matplotlib
+#layoutparser
+#/////////
+#pip install -U nltk
+#import nltk
+#nltk.download('punkt')
+
+#------retrieval-----
+tiktoken
+# onnxruntime-gpu # 1.18.1 fit with cudnn8 and cuda11.8  (if want higher version onnxruntime-gpu try cudnn9 and cuda12.x)
+
+#-----tools----------
+arxiv
+wikipedia
+deepl
+duckduckgo_search
+
+peewee
+psycopg2-binary
+
+serpapi
+google-search-results
+
+scholarly
+bio

@@ -1,0 +1,72 @@
+{
+	"components": {
+			"input_0": {
+				"component_name": "IFile",
+				"params": {
+					"file_type": "image",
+					"key_input": "face_image"
+				},
+				"downstream": ["callfunction_0"],
+				"upstream": [],
+				"input": [],
+				"output":["face_image"],
+				"type_data": "List[str]"
+			},
+			"input_1": {
+				"component_name": "InputGraph",
+				"params": {
+					"prologue": "Hi there!",
+					"key_input": "user_question"
+				},
+				"downstream": ["generate_0"],
+				"upstream": [],
+				"input": [],
+				"output":["user_question"],
+				"type_data": "str"
+			},
+			"callfunction_0": {
+				"component_name": "CallTool",
+				"params": {
+				  "api": "http://192.168.6.179:8421/api/searchUserv2",
+				  "payload": {},
+				  "headers": {},
+				  "filebs": [],
+				  "connection": {"input_0_face_image":"filebs"}
+				},
+				"downstream": ["generate_0"],
+				"upstream": ["input_0"],
+				"input": ["input_0_face_image"],
+				"output":["tool_ans"],
+				"type_data": "dict"
+			},
+			"generate_0": {
+				"component_name": "Generate",
+				"params": {
+					"temperature": 0,
+					"model_name": "mixtral-8x7b-32768",
+					"prompt": "You should answer the question based on the response output by the API tool.\nQuestion: {input_1_user_question} \nResponse: {callfunction_0_tool_ans} \nAnswer:"
+				},
+				"downstream": ["output_0"],
+				"upstream": ["callfunction_0", "input_1"],
+				"input": ["input_1_user_question", "callfunction_0_tool_ans"],
+				"output":["generation"],
+				"type_data": "str"
+			},
+			"output_0": {
+				"component_name": "OutputGraph",
+				"params": {
+					"key_output": "callfunction_0_tool_ans"
+				},
+				"downstream": [],
+				"upstream": ["generate_0"],
+				"input": ["generate_0_generation"],
+				"output":[],
+				"type_data": null
+			}
+	},
+	"history": [],
+	"messages": [],
+	"reference": {},
+	"path": [],
+	"answer": []
+}

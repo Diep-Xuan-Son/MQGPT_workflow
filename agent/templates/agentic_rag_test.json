@@ -1,0 +1,107 @@
+{
+	"components": {
+			"input_0": {
+				"component_name": "InputGraph",
+				"params": {
+					"prologue": "Hi there!",
+					"key_input": "user_question"
+				},
+				"downstream": ["decompose_0"],
+				"upstream": [],
+				"input": [],
+				"output":["user_question"],
+				"type_data": "str"
+			},
+			"decompose_0": {
+				"component_name": "Decompose",
+				"params": {
+				  "temperature": 0,
+				  "model_name": "mixtral-8x7b-32768"
+				},
+				"downstream": ["retrieve_0"],
+				"upstream": ["input_0"],
+				"input": ["input_0_user_question"],
+				"output":["sub_questions"],
+				"type_data": "List[str]"
+			},
+			"retrieve_0": {
+				"component_name": "Retrieve",
+				"params": {
+					"similarity_threshold": 0.4,
+					"top_k": 10,
+					"collection_names": ["test2"],
+					"qdrant_url": "http://192.168.6.163:6333",
+					"minio_url": "192.168.6.163:9100"
+				},
+				"downstream": ["grade_documents_0"],
+				"upstream": ["decompose_0", "transform_query_0"],
+				"input": ["decompose_0_sub_questions"],
+				"output":["documents"],
+				"type_data": "List[str]"
+			},
+			"grade_documents_0": {
+				"component_name": "GradeDocuments",
+				"params": {
+					"temperature": 0,
+					"model_name": "mixtral-8x7b-32768",
+					"prompt": "Retrieved document: \n\n {retrieve_0_documents} \n\n User question: {input_0_user_question}"
+				},
+				"downstream": ["condition_0"],
+				"upstream": ["retrieve_0"],
+				"input": ["retrieve_0_documents", "input_0_user_question"],
+				"output":["filtered_docs"],
+				"type_data": "List[str]"
+			},
+			"condition_0": {
+				"component_name": "Condition",
+				"params": {},
+				"downstream": ["generate_0", "transform_query_0"],
+				"upstream": ["grade_documents_0"],
+				"input": ["grade_documents_0_filtered_docs"],
+				"output":["generate_0", "transform_query_0"],
+				"type_data": "str"
+			},
+			"transform_query_0": {
+				"component_name": "TransformQuery",
+				"params": {
+					"temperature": 0,
+					"model_name": "mixtral-8x7b-32768",
+					"prompt": "Here is the initial question: \n\n {question} \n Formulate an improved question."
+				},
+				"downstream": ["retrieve_0"],
+				"upstream": ["condition_0"],
+				"input": ["input_0_user_question"],
+				"output":["better_question"],
+				"type_data": "str"
+			},
+			"generate_0": {
+				"component_name": "Generate",
+				"params": {
+					"temperature": 0,
+					"model_name": "mixtral-8x7b-32768",
+					"prompt": "You are an assistant for question-answering tasks. Use the following pieces of retrieved context to answer the question. If you don't know the answer, just say that you don't know. Use three sentences maximum and keep the answer concise. The answer write in Vietnamese.\nQuestion: {input_0_user_question} \nContext: {grade_documents_0_filtered_docs} \nAnswer:"
+				},
+				"downstream": ["output_0"],
+				"upstream": ["condition_0"],
+				"input": ["input_0_user_question", "grade_documents_0_filtered_docs"],
+				"output":["generation"],
+				"type_data": "str"
+			},
+			"output_0": {
+				"component_name": "OutputGraph",
+				"params": {
+					"key_output": "generate_0_generation"
+				},
+				"downstream": [],
+				"upstream": ["generate_0"],
+				"input": ["generate_0_generation"],
+				"output":[],
+				"type_data": null
+			}
+	},
+	"history": [],
+	"messages": [],
+	"reference": {},
+	"path": [],
+	"answer": []
+}

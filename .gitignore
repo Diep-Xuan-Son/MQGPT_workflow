@@ -1,0 +1,7 @@
+__pycache__
+/data
+/src/image_test
+/src/static/*
+/bm42/weights/*
+
+# git rm --ignore-unmatch --cached */__pycache__/*
